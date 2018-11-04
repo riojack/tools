@@ -1,4 +1,13 @@
-#!/usr/bin/env bash
+is_gitted_directory_tree() {
+	$(git rev-parse --show-toplevel &> /dev/null)
+	local git_toplevel_ret=$?
+
+	if [ $git_toplevel_ret -eq 0 ];
+		then
+			echo $(git rev-parse --show-toplevel)
+	fi
+	echo ""
+}
 
 dir_me_up() {
 	local directory_name="${PWD##*/}"
@@ -7,15 +16,14 @@ dir_me_up() {
 }
 
 branch_me_up() {
-	if [ -e ".git" ];
+	if [ -n "$(is_gitted_directory_tree)" ];
 		then
 			printf ' \033[1;33m(%s)\033[0m' $(git rev-parse --abbrev-ref HEAD)
-
 	fi
 }
 
 node_me_up() {
-	if [ -e package.json ];
+	if [[ -n "$(is_gitted_directory_tree)" && -e "$(git rev-parse --show-toplevel)/package.json" ]];
 		then
 			printf ' \033[38;5;106m(Node %s)\033[0m' $(node -v)
 	fi
