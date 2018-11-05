@@ -26,15 +26,19 @@ dir_me_up() {
 branch_me_up() {
 	if [ -n "$(is_gitted_directory_tree)" ];
 		then
-			printf ' \033[1;33m(%s)\033[0m' $(git rev-parse --abbrev-ref HEAD)
+			printf " \e[1;33m(%s)\e[0m" $(git rev-parse --abbrev-ref HEAD)
 	fi
 }
 
 node_me_up() {
 	if [[ -n "$(is_gitted_directory_tree)" && -e "$(git rev-parse --show-toplevel)/package.json" ]];
 		then
-			printf ' \033[38;5;106m(Node %s)\033[0m' $(node -v)
+			printf " \e[38;5;106m(Node %s)\e[0m" $(node -v)
 	fi
 }
 
-export PS1='\[\e[32m\]`echo "${PWD%/*}" | sed -e "s;\(/.\)[^/]*;\1;g"`/$(dir_me_up)\[\e[m\]$(branch_me_up)$(node_me_up) \$ '
+shortened_path() {
+	echo "${PWD%/*}" | sed -e "s;\(/.\)[^/]*;\1;g"
+}
+
+export PS1="\[\e[32m\]\$(shortened_path)/\$(dir_me_up)\[\e[m\]\$(branch_me_up)\$(node_me_up) \$ "
